@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="LibreriasBlockchain">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/uade/edu/progra3/lib/LibreriasBlockchain.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
