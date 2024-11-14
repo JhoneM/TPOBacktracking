@@ -20,16 +20,22 @@ public class Principal {
 		List<List<Bloque>> soluciones = algoritmo.construirBlockchain(transacciones, maxTamanioBloque, maxValorBloque, maxTransacciones, maxBloques);
 		System.out.println("Soluciones encontradas: " + soluciones.size());
 		System.out.println("-------------------------");
+		int solucionIndex = 1;
 		for (List<Bloque> solucion : soluciones) {
-			System.out.println("Solución: " + solucion);
-			  for (Bloque bloque : solucion) {
+			System.out.println("Solucion " + solucionIndex + ":");
+			int bloqueIndex = 1;
+			for (Bloque bloque : solucion) {
+				System.out.println("");
+				System.out.println("Bloque " + bloqueIndex + ":");
 				System.out.println("Tamaño: " + bloque.getTamanioTotal());
 				System.out.println("Valor: " + bloque.getValorTotal());
 				for (Transaccion transaccion : bloque.getTransacciones()) {
-				  System.out.println(
-					  "Transacción: " + transaccion.getTamanio() + " - " + transaccion.getValor());
+					System.out.println("Transacción: " + "T" + transaccion.getTamanio() + " - V" + transaccion.getValor());
 				}
+				bloqueIndex++;
 			}
+			solucionIndex++;
+			System.out.println("----------------");
 		}
 	}
 

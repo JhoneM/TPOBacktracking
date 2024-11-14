@@ -11,7 +11,8 @@ import java.util.ArrayList;
 public class AlgoritmoDeBlockchainImpl implements AlgoritmoDeBlockchain {
 
     @Override
-    public List<List<Bloque>> construirBlockchain(List<Transaccion> transacciones, int maxTamanioBloque, int maxValorBloque, int maxTransacciones, int maxBloques) {
+    public List<List<Bloque>> construirBlockchain(List<Transaccion> transacciones, int maxTamanioBloque,
+                                                  int maxValorBloque, int maxTransacciones, int maxBloques) {
         List<List<Bloque>> soluciones = new ArrayList<>();
 
         if (maxTransacciones * maxBloques < transacciones.size()) {
@@ -31,23 +32,30 @@ public class AlgoritmoDeBlockchainImpl implements AlgoritmoDeBlockchain {
         if (transacciones.isEmpty()) {
             // Verificar que la cantidad de bloques no supere el máximo permitido
             if (blockchainActual.size() <= maxBloques) {
+                // Agregamos una copia de la blockchain actual a las soluciones, se usa una copia
+                // para evitar un error de modificación concurrente
                 soluciones.add(clonarBlockchain(blockchainActual));
             }
             return;
         }
 
+        // Tomamos la transacción actual y preparamos la lista de restantes
+        // Aca tambien se copia para evitar modificacion concurrente
         Transaccion transaccionActual = transacciones.get(0);
         List<Transaccion> transaccionesRestantes = new ArrayList<>(transacciones.subList(1, transacciones.size()));
 
+        // Recorremos cada bloque existente en una nueva lista para evitar un error de modificacion concurrente
         for (Bloque bloque : new ArrayList<>(blockchainActual)) {
             if (puedeAgregar(bloque, transaccionActual, maxTamanioBloque, maxValorBloque, maxTransacciones)) {
                 agregarTransaccion(bloque, transaccionActual);
-                backTracking(soluciones, transaccionesRestantes, blockchainActual, maxTamanioBloque,
-                        maxValorBloque, maxTransacciones, maxBloques);
-                removerTransaccion(bloque, transaccionActual);
+                backTracking(soluciones, transaccionesRestantes, blockchainActual, maxTamanioBloque, maxValorBloque,
+                        maxTransacciones, maxBloques);
+                removerTransaccion(bloque, transaccionActual); // Poda
             }
         }
 
+        // Se crea un nuevo bloque y se intenta agregar la transaccion actual
+        // Esto se hace en caso de que ninguno de los bloques actuales de la blockchain pueda acomodar la transaccion
         Bloque nuevoBloque = new Bloque();
         agregarTransaccion(nuevoBloque, transaccionActual);
         blockchainActual.add(nuevoBloque);
@@ -56,7 +64,8 @@ public class AlgoritmoDeBlockchainImpl implements AlgoritmoDeBlockchain {
         blockchainActual.remove(nuevoBloque);
     }
 
-    private boolean puedeAgregar(Bloque bloque, Transaccion transaccion, int maxTamanioBloque, int maxValorBloque, int maxTransacciones) {
+    private boolean puedeAgregar(Bloque bloque, Transaccion transaccion, int maxTamanioBloque, int maxValorBloque,
+                                 int maxTransacciones) {
         return (bloque.getTamanioTotal() + transaccion.getTamanio() <= maxTamanioBloque) &&
                 (bloque.getValorTotal() + transaccion.getValor() <= maxValorBloque) &&
                 (bloque.getTransacciones().size() < maxTransacciones) &&
